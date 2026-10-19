@@ -6,7 +6,7 @@ import (
 	fmt "fmt"
 	sync "sync"
 
-	typed "sigs.k8s.io/structured-merge-diff/v6/typed"
+	typed "sigs.k8s.io/structured-merge-diff/v7/typed"
 )
 
 func Parser() *typed.Parser {
@@ -2146,6 +2146,9 @@ var schemaYAML = typed.YAMLObject(`types:
     - name: controlPlaneTopology
       type:
         scalar: string
+    - name: infrastructureTopology
+      type:
+        scalar: string
     - name: platformSpec
       type:
         namedType: com.github.openshift.api.config.v1.PlatformSpec
@@ -2186,6 +2189,10 @@ var schemaYAML = typed.YAMLObject(`types:
     - name: platformStatus
       type:
         namedType: com.github.openshift.api.config.v1.PlatformStatus
+    - name: topologyTransitionStatus
+      type:
+        namedType: com.github.openshift.api.config.v1.TopologyTransitionStatus
+      default: {}
 - name: com.github.openshift.api.config.v1.Ingress
   map:
     fields:
@@ -3992,6 +3999,51 @@ var schemaYAML = typed.YAMLObject(`types:
     - name: message
       type:
         scalar: string
+- name: com.github.openshift.api.config.v1.TopologyState
+  map:
+    fields:
+    - name: controlPlaneTopology
+      type:
+        scalar: string
+    - name: infrastructureTopology
+      type:
+        scalar: string
+- name: com.github.openshift.api.config.v1.TopologyTransition
+  map:
+    fields:
+    - name: evaluations
+      type:
+        list:
+          elementType:
+            namedType: io.k8s.apimachinery.pkg.apis.meta.v1.Condition
+          elementRelationship: associative
+          keys:
+          - type
+    - name: source
+      type:
+        namedType: com.github.openshift.api.config.v1.TopologyState
+      default: {}
+    - name: target
+      type:
+        namedType: com.github.openshift.api.config.v1.TopologyState
+      default: {}
+- name: com.github.openshift.api.config.v1.TopologyTransitionStatus
+  map:
+    fields:
+    - name: conditions
+      type:
+        list:
+          elementType:
+            namedType: io.k8s.apimachinery.pkg.apis.meta.v1.Condition
+          elementRelationship: associative
+          keys:
+          - type
+    - name: transitions
+      type:
+        list:
+          elementType:
+            namedType: com.github.openshift.api.config.v1.TopologyTransition
+          elementRelationship: atomic
 - name: com.github.openshift.api.config.v1.Update
   map:
     fields:
